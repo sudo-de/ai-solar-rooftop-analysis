@@ -29,3 +29,4 @@ logs/
 
 # system files
 .DS_Storenode_modules/
+frontend/node_modules/
