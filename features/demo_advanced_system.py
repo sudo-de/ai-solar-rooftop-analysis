@@ -52,7 +52,7 @@ def create_demo_config() -> Dict[str, Any]:
 def demonstrate_basic_analysis():
     """Demonstrate basic enhanced analysis"""
     print("\n" + "="*60)
-    print("ENHANCED SOLAR ROOFTOP ANALYSIS DEMONSTRATION")
+    print("🚀 ENHANCED SOLAR ROOFTOP ANALYSIS DEMONSTRATION")
     print("="*60)
     
     # Initialize the enhanced system
@@ -312,7 +312,7 @@ def demonstrate_system_performance(system: AdvancedSolarAnalysisSystem):
     for subsystem, status in subsystems.items():
         print(f"   - {subsystem.replace('_', ' ').title()}: {status}")
     
-    print("\nAdvanced Capabilities:")
+    print("\n🚀 Advanced Capabilities:")
     capabilities = performance['capabilities']
     for capability in capabilities:
         print(f"   - {capability}")
@@ -363,7 +363,7 @@ def main():
             print("   - Climate-adaptive forecasting")
             print("   - Multi-objective optimization")
             
-            print("\nNext Steps:")
+            print("\n🚀 Next Steps:")
             print("   - Deploy AR visualization for client review")
             print("   - Set up edge AI for real-time monitoring")
             print("   - Register data on blockchain for verification")
