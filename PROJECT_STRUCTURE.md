@@ -103,7 +103,7 @@ frontend/
 ### **Backend Layer (FastAPI)**
 ```
 backend/
-├── 🚀 API Endpoints
+├── API Endpoints
 │   ├── /api/analyze (Standard Analysis)
 │   ├── /api/analyze/advanced (AI Analysis)
 │   ├── /api/cities (Location Data)
@@ -158,7 +158,7 @@ advanced_features/
 ### **Container Services**
 ```
 docker-compose.yml
-├── 🚀 backend (FastAPI)
+├── backend (FastAPI)
 │   ├── Port: 8000
 │   ├── Dependencies: Redis
 │   └── Volumes: uploads, outputs, logs
@@ -204,7 +204,7 @@ Database: Redis (Caching)
 Deployment: Docker + Docker Compose + Nginx
 ```
 
-## 🚀 **Quick Start Commands**
+## **Quick Start Commands**
 
 ### **Development**
 ```bash

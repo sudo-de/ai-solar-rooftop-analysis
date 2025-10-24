@@ -1,6 +1,6 @@
 # Solar Rooftop Analysis System
 
-## 🚀 Next-Generation AI-Powered Solar Analysis
+## Next-Generation AI-Powered Solar Analysis
 
 This system integrates cutting-edge technologies to provide the most accurate, comprehensive, and innovative solar rooftop analysis available. Built on the foundation of your existing system, it adds revolutionary capabilities that push the boundaries of what's possible in solar energy assessment.
 
@@ -114,7 +114,7 @@ config = {
 }
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Basic Advanced Analysis
 ```python
@@ -283,7 +283,7 @@ AR Visualization → Edge Deployment → Blockchain Verification
 - Grid planning
 - Carbon credit tracking
 
-## 🚀 Future Enhancements
+## Future Enhancements
 
 ### **Planned Features**
 - Quantum-inspired optimization algorithms

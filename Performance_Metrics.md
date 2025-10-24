@@ -65,7 +65,7 @@ Metrics from `logs/solar_analysis.log` (2025-05-28 00:24:44) and `pytest` for `s
 
 ---
 
-## 🚀 Future Improvements
+## Future Improvements
 - **GPU YOLO**: Reduce image analysis to ~`0.3s`
 - **Irradiance Caching**: Eliminate `0.31s` API call
 - **Async Exports**: Parallelize PDF/CSV/Excel/JSON

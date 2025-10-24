@@ -1,4 +1,4 @@
-# 🚀 AI Solar Rooftop Analysis System
+# AI Solar Rooftop Analysis System
 
 A next-generation AI-powered solar rooftop analysis platform featuring cutting-edge technology including **3D CAD modeling**, **YOLO object detection**, **vision transformers**, **physics-informed AI**, **AR visualization**, **federated learning**, **edge AI deployment**, and **blockchain verification**.
 
@@ -34,7 +34,7 @@ A next-generation AI-powered solar rooftop analysis platform featuring cutting-e
 - **Professional CAD Integration**: Export 3D models for CAD software
   
 
-## 🚀 Quick Start
+## Quick Start
 
 ### **Option 1: Docker Setup (Recommended)**
 ```bash
@@ -216,7 +216,7 @@ structural_analysis = cad_analysis['structural_analysis']
 - **API Response**: <5 seconds for standard analysis
 - **Frontend Load**: <2 seconds initial load time
 
-## 🚀 DevOps & Deployment
+## DevOps & Deployment
 
 ### **Docker Deployment**
 ```bash
