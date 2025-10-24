@@ -28,4 +28,4 @@ logs/
 *.log
 
 # system files
-.DS_Store
+.DS_Storenode_modules/
