@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { 
   ChartBarIcon, 
   EyeIcon,
@@ -170,9 +171,11 @@ export function ResultsDisplay({ results }: ResultsDisplayProps) {
               <div className="bg-gray-50 rounded-lg p-4">
                 <h5 className="font-medium text-gray-900 mb-3">YOLO Segmentation Visualization</h5>
                 <div className="relative">
-                  <img 
+                  <Image 
                     src={results.results[0].roof_analysis.segmented_image_base64}
                     alt="Segmented rooftop analysis"
+                    width={800}
+                    height={600}
                     className="w-full h-auto rounded-lg border border-gray-200"
                     onError={(e) => {
                       e.currentTarget.style.display = 'none';
