@@ -288,7 +288,7 @@ def demonstrate_climate_forecasting(results: Dict[str, Any]):
     else:
         print("❌ Climate forecasting not available")
 
-def demonstrate_system_performance(system: AdvancedSolarAnalysisSystem):
+def demonstrate_system_performance(system: SolarAnalysisSystem):
     """Demonstrate system performance metrics"""
     print("\n" + "="*60)
     print("📈 SYSTEM PERFORMANCE METRICS")
