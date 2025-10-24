@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: solar-analysis-staging
+  labels:
+    app: backend
+    environment: staging
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+        environment: staging
+    spec:
+      containers:
+      - name: backend
+        image: ghcr.io/your-org/ai-solar-rooftop-analysis-backend:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: ENVIRONMENT
+          value: "staging"
+        - name: LOG_LEVEL
+          value: "INFO"
+        - name: PYTHONPATH
+          value: "/app"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        volumeMounts:
+        - name: outputs
+          mountPath: /app/outputs
+        - name: uploads
+          mountPath: /app/uploads
+        - name: logs
+          mountPath: /app/logs
+      volumes:
+      - name: outputs
+        persistentVolumeClaim:
+          claimName: outputs-pvc
+      - name: uploads
+        persistentVolumeClaim:
+          claimName: uploads-pvc
+      - name: logs
+        persistentVolumeClaim:
+          claimName: logs-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: solar-analysis-staging
+  labels:
+    app: backend
+spec:
+  selector:
+    app: backend
+  ports:
+  - port: 8000
+    targetPort: 8000
+    protocol: TCP
+  type: ClusterIP
