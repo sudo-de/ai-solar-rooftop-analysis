@@ -312,7 +312,7 @@ def demonstrate_system_performance(system: AdvancedSolarAnalysisSystem):
     for subsystem, status in subsystems.items():
         print(f"   - {subsystem.replace('_', ' ').title()}: {status}")
     
-    print("\n🚀 Advanced Capabilities:")
+    print("\nAdvanced Capabilities:")
     capabilities = performance['capabilities']
     for capability in capabilities:
         print(f"   - {capability}")
@@ -363,7 +363,7 @@ def main():
             print("   - Climate-adaptive forecasting")
             print("   - Multi-objective optimization")
             
-            print("\n🚀 Next Steps:")
+            print("\nNext Steps:")
             print("   - Deploy AR visualization for client review")
             print("   - Set up edge AI for real-time monitoring")
             print("   - Register data on blockchain for verification")
