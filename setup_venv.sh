@@ -1,7 +1,7 @@
 #!/bin/bash
 # Virtual Environment Setup Script for Solar Rooftop Analysis
 
-echo "🚀 Setting up Solar Rooftop Analysis Environment..."
+echo "Setting up Solar Rooftop Analysis Environment..."
 
 # Create virtual environment
 echo "📦 Creating virtual environment..."

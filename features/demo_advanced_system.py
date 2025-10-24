@@ -52,7 +52,7 @@ def create_demo_config() -> Dict[str, Any]:
 def demonstrate_basic_analysis():
     """Demonstrate basic enhanced analysis"""
     print("\n" + "="*60)
-    print("🚀 ENHANCED SOLAR ROOFTOP ANALYSIS DEMONSTRATION")
+    print("ENHANCED SOLAR ROOFTOP ANALYSIS DEMONSTRATION")
     print("="*60)
     
     # Initialize the enhanced system

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Complete Setup Script for Solar Rooftop Analysis System
 
-echo "🚀 Setting up Solar Rooftop Analysis System..."
+echo "Setting up Solar Rooftop Analysis System..."
 
 # Check if Docker is installed
 if ! command -v docker &> /dev/null; then
@@ -51,7 +51,7 @@ fi
 echo "🐳 Building and starting Docker services..."
 docker-compose build
 
-echo "🚀 Starting services..."
+echo "Starting services..."
 docker-compose up -d
 
 # Wait for services to be ready
