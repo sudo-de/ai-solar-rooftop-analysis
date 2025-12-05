@@ -1,0 +1,19 @@
+{
+  "moderate": true,
+  "allowlist": [
+    {
+      "GHSA-1234-5678-9abc": "Example: Allow this specific vulnerability"
+    }
+  ],
+  "path-allowlist": [
+    "/test/",
+    "/tests/",
+    "/spec/"
+  ],
+  "ignore-dev-dependencies": false,
+  "report": {
+    "type": "full",
+    "path": "./audit-results.json"
+  },
+  "output-format": "text"
+}

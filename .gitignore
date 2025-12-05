@@ -1,32 +1,32 @@
-# Byte-compiled / optimized / DLL files
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+backend/solar_analysis.db
+
+# Model files (large files - uncomment if you want to ignore them)
+# *.pt
+# backend/models/*.pt
+# yolov8n.pt
+
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Virtual environment folder
+*.so
+.Python
+env/
 venv/
-*.pt
-*.dylib
+ENV/
+.venv
 
-
-# Distribution / packaging
-build/
-dist/
-*.egg-info/
-
-# Pytest cache
-.pytest_cache/
-
-# VS Code settings folder
+# IDE
 .vscode/
+.idea/
+*.swp
+*.swo
 
-# Environment variables file
-.env
+# OS
+.DS_Store
+Thumbs.db
 
-# Logs
-logs/
-*.log
-
-# system files
-.DS_Storenode_modules/
-frontend/node_modules/
