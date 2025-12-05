@@ -1,0 +1,37 @@
+# Ignore Python/backend files and directories
+backend/
+requirements.txt
+*.py
+venv/
+__pycache__/
+*.pyc
+features/
+outputs/
+monitoring/
+k8s/
+*.sh
+*.bat
+*.yml
+*.yaml
+Dockerfile*
+nginx.conf
+solar_analysis.db
+
+# Ignore development and documentation
+.git/
+.github/
+node_modules/
+*.log
+.env*
+*.md
+README*
+ARCHITECTURE.md
+DEVOPS.md
+PROJECT_STRUCTURE.md
+PERFORMANCE_METRICS.md
+Implementation_Documentation.md
+
+# Only deploy frontend
+!frontend/
+!vercel.json
+!.vercelignore
