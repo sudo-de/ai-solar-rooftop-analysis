@@ -349,4 +349,3 @@ def preprocess_image(image: Image.Image, model, target_size: Optional[Tuple[int,
             "success": False,
             "error": str(e)
         }
-

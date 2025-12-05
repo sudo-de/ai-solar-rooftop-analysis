@@ -4,11 +4,6 @@
   "devCommand": "cd frontend && npm run dev",
   "installCommand": "cd frontend && npm ci",
   "framework": "vite",
-  "functions": {
-    "frontend/src/**/*.{js,ts}": {
-      "runtime": "@vercel/node"
-    }
-  },
   "rewrites": [
     {
       "source": "/api/(.*)",
