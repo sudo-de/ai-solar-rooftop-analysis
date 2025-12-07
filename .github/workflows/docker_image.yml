@@ -22,6 +22,7 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    environment: docker
     permissions:
       contents: read
       packages: write
@@ -46,7 +47,7 @@ jobs:
         else
           echo "has_creds=false" >> $GITHUB_OUTPUT
           echo "⚠️ Docker credentials not found in secrets"
-          echo "Please set DOCKER_USERNAME and DOCKER_PASSWORD secrets in GitHub repository settings"
+          echo "Please set DOCKER_USERNAME and DOCKER_PASSWORD as environment secrets in the 'docker' environment"
         fi
 
     - name: Log in to Docker Hub
@@ -122,8 +123,8 @@ jobs:
           echo "⚠️ **Docker credentials not configured. Image built but not pushed.**" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "To enable pushing to Docker Hub:" >> $GITHUB_STEP_SUMMARY
-          echo "1. Go to GitHub repository Settings → Secrets and variables → Actions" >> $GITHUB_STEP_SUMMARY
-          echo "2. Add secrets: \`DOCKER_USERNAME\` and \`DOCKER_PASSWORD\`" >> $GITHUB_STEP_SUMMARY
+          echo "1. Go to GitHub repository Settings → Secrets and variables → Actions → Environments → docker" >> $GITHUB_STEP_SUMMARY
+          echo "2. Add environment secrets: \`DOCKER_USERNAME\` and \`DOCKER_PASSWORD\`" >> $GITHUB_STEP_SUMMARY
           echo "3. For Docker Hub, use an Access Token (not password) from https://hub.docker.com/settings/security" >> $GITHUB_STEP_SUMMARY
         else
           echo "✅ **Image pushed to Docker Hub**" >> $GITHUB_STEP_SUMMARY
