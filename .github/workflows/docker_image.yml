@@ -27,25 +27,6 @@ jobs:
       packages: write
 
     steps:
-    - name: Free disk space
-      run: |
-        echo "Disk space before cleanup:"
-        df -h
-        # Remove unnecessary packages and files
-        sudo rm -rf /usr/share/dotnet
-        sudo rm -rf /usr/local/lib/android
-        sudo rm -rf /opt/ghc
-        sudo rm -rf /opt/hostedtoolcache/CodeQL
-        sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-        # Clean up apt cache
-        sudo apt-get clean
-        sudo rm -rf /var/lib/apt/lists/*
-        # Clean up Docker
-        docker system prune -af --volumes || true
-        docker builder prune -af || true
-        echo "Disk space after cleanup:"
-        df -h
-
     - name: Checkout code
       uses: actions/checkout@v4
 
@@ -123,16 +104,6 @@ jobs:
         cache-to: type=gha,mode=min
       continue-on-error: true
 
-    - name: Clean up after frontend build
-      if: always()
-      run: |
-        docker builder prune -af || true
-        docker image prune -af || true
-        rm -rf /tmp/* 2>/dev/null || true
-        rm -rf ~/.cache/* 2>/dev/null || true
-        echo "Disk space after frontend build:"
-        df -h
-
     - name: Build backend image
       uses: docker/build-push-action@v5
       with:
@@ -155,29 +126,6 @@ jobs:
         cache-to: type=gha,mode=min
       continue-on-error: true
 
-    - name: Clean up after backend build
-      if: always()
-      run: |
-        docker builder prune -af || true
-        docker image prune -af || true
-        rm -rf /tmp/* 2>/dev/null || true
-        rm -rf ~/.cache/* 2>/dev/null || true
-        echo "Disk space after backend build:"
-        df -h
-
-    - name: Final cleanup
-      if: always()
-      run: |
-        echo "Docker disk usage:"
-        docker system df || true
-        docker system prune -af --volumes || true
-        docker builder prune -af || true
-        docker image prune -af || true
-        rm -rf /tmp/* 2>/dev/null || true
-        rm -rf ~/.cache/* 2>/dev/null || true
-        echo "Final disk space:"
-        df -h
-
     - name: Image summary
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
@@ -197,3 +145,42 @@ jobs:
         else
           echo "✅ **Images pushed to Docker Hub**" >> $GITHUB_STEP_SUMMARY
         fi
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    environment: production
+    permissions:
+      contents: read
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Deploy to production
+      run: |
+        echo "🚀 Deploying Docker images to production..."
+        echo ""
+        echo "### Deployment Information" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Frontend Image:** \`${{ secrets.DOCKER_USERNAME }}/ai-solar-frontend:latest\`" >> $GITHUB_STEP_SUMMARY
+        echo "**Backend Image:** \`${{ secrets.DOCKER_USERNAME }}/ai-solar-backend:latest\`" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Deployment Commands" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+        echo "# Pull latest images" >> $GITHUB_STEP_SUMMARY
+        echo "docker pull ${{ secrets.DOCKER_USERNAME }}/ai-solar-frontend:latest" >> $GITHUB_STEP_SUMMARY
+        echo "docker pull ${{ secrets.DOCKER_USERNAME }}/ai-solar-backend:latest" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "# Deploy with docker-compose" >> $GITHUB_STEP_SUMMARY
+        echo "docker-compose pull" >> $GITHUB_STEP_SUMMARY
+        echo "docker-compose up -d" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "✅ **Images are ready for deployment**" >> $GITHUB_STEP_SUMMARY
+        echo ""
+        echo "✅ Deployment information generated"
+        echo "📦 Images are available on Docker Hub"
+        echo "🔗 Pull and deploy using the commands above"
