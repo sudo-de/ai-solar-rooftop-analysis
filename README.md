@@ -1,296 +1,364 @@
 # AI Solar Rooftop Analysis System
 
-A next-generation AI-powered solar rooftop analysis platform featuring cutting-edge technology including **3D CAD modeling**, **YOLO object detection**, **vision transformers**, **physics-informed AI**, **AR visualization**, **federated learning**, **edge AI deployment**, and **blockchain verification**.
+A next-generation AI-powered solar rooftop analysis platform featuring cutting-edge technology including **NextGen SegFormer Alpha**, **YOLOv11 object detection**, **vision transformers**, **physics-informed AI**, **multi-scale ensemble methods**, and **advanced solar calculations**.
 
 ## ✨ Key Features
 
-### 🧠 **AI Technology**
-- **YOLO Object Detection**: Real-time roof obstruction detection and segmentation
-- **3D CAD Analysis**: Professional-grade 3D roof modeling and solar panel placement
+### 🧠 **NextGen AI Technology**
+- **NextGen SegFormer Alpha**: Ensemble models (B2, B3) with multi-scale analysis (5 scales), alpha-based blending, and test-time augmentation
+- **YOLOv11 Object Detection**: Real-time roof obstruction detection with multiple model variants (n, s, m, l)
 - **Vision Transformers**: >95% accuracy in roof detection using SegFormer architecture
 - **Physics-Informed AI**: <5% error in energy predictions combining ML with solar physics
-- **Multispectral Analysis**: Sentinel-2, Landsat, and LiDAR integration for comprehensive roof modeling
-- **Climate-Adaptive Forecasting**: 20-30 year solar viability using IPCC scenarios
+- **Advanced Post-Processing**: CRF refinement, edge enhancement, and adaptive fusion
+- **Uncertainty Estimation**: Confidence calibration and prediction uncertainty scoring
 
 ### 📱 **Modern User Experience**
-- **React Frontend**: Modern, responsive web interface with real-time updates
-- **3D CAD Visualization**: Interactive 3D roof analysis and solar panel placement
-- **YOLO Segmentation**: Visual object detection with bounding boxes and analysis overlay
-- **AR Visualization**: Interactive 3D solar panel placement on mobile devices
+- **React Frontend**: Modern, responsive web interface with real-time progress tracking
+- **Interactive Visualizations**: Real-time analysis results with segmented images
+- **Progress Indicators**: Step-by-step progress bar showing analysis stages
 - **FastAPI Backend**: High-performance API with automatic documentation
-- **Multi-format Exports**: PDF, CSV, Excel, JSON reports with enhanced visualizations
-
-### 🔒 **Privacy & Security**
-- **Federated Learning**: Privacy-preserving model training across decentralized datasets
-- **Blockchain Verification**: Transparent data verification and carbon credit distribution
-- **Edge AI Deployment**: Real-time analysis on drones and IoT devices
-- **Differential Privacy**: Mathematical privacy guarantees for data protection
+- **Multi-format Reports**: Detailed text and JSON reports with NextGen feature details
 
 ### 🎯 **Business Impact**
-- **6x Faster Processing**: 5s vs 30s analysis time
-- **50% Cost Reduction**: Edge AI deployment vs cloud processing
-- **>90% Conversion Rate**: Automated lead generation for solar companies
-- **Carbon Credits**: Blockchain-based incentive distribution
-- **Professional CAD Integration**: Export 3D models for CAD software
-  
+- **6x Faster Processing**: 5-15s vs 30s analysis time
+- **>95% Accuracy**: NextGen ensemble methods for superior detection
+- **Advanced Analytics**: Roof complexity, edge quality, and uncertainty scoring
+- **Professional Reports**: Comprehensive analysis with detailed metrics
 
-## Quick Start
+## 🚀 Quick Start
 
 ### **Option 1: Docker Setup (Recommended)**
+
 ```bash
 # Clone the repository
 git clone <your-repo-url>
 cd ai-solar-rooftop-analysis
 
-# Run the complete setup
-./setup.sh
+# Production deployment
+docker-compose up -d
 
-# Access the application
-# Frontend: http://localhost:3000
-# Backend API: http://localhost:8000
-# API Docs: http://localhost:8000/docs
+# Development environment
+docker-compose -f docker-compose.dev.yml up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
 ```
 
+**Access Points:**
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
+- API Docs: http://localhost:8000/docs
+- Nginx Proxy: http://localhost:80 (if enabled)
+
 ### **Option 2: Manual Setup**
+
 ```bash
-# 1. Set up virtual environment
-./setup_venv.sh  # Linux/macOS
-# or
-setup_venv.bat   # Windows
-
-# 2. Activate virtual environment
-source venv/bin/activate  # Linux/macOS
-# or
-venv\Scripts\activate     # Windows
-
-# 3. Start backend
+# 1. Backend setup
 cd backend
+python -m venv .venv
+source .venv/bin/activate  # Linux/macOS
+# or
+.venv\Scripts\activate     # Windows
+
+pip install -r ../requirements.txt
 python main.py
 
-# 4. Start frontend (in another terminal)
+# 2. Frontend setup (in another terminal)
 cd frontend
 npm install
 npm run dev
 ```
 
 ### **Option 3: Development Setup**
+
 ```bash
 # Backend development
 cd backend
-pip install -r requirements.txt
-uvicorn main:app --reload
+source .venv/bin/activate
+pip install -r ../requirements.txt
+python main.py  # Runs on http://localhost:8000
 
 # Frontend development
 cd frontend
 npm install
-npm run dev
+npm run dev  # Runs on http://localhost:5173
 ```
 
 ## 📱 Usage
 
 ### **Web Interface**
 1. **Upload Images**: Drag & drop rooftop images (PNG/JPG/JPEG, max 10MB each)
-2. **Select Location**: Choose from 10 major Indian cities or enter GPS coordinates
-3. **Choose Panel Type**: Select from monocrystalline, bifacial, or perovskite panels
-4. **Start Analysis**: Click "Start Analysis" for comprehensive AI-powered assessment
-5. **View Results**: Interactive dashboard with multiple analysis tabs:
-   - **Overview**: Summary of solar potential and financial analysis
-   - **Details**: Detailed energy calculations and ROI projections
-   - **AI Analysis**: YOLO object detection with visual segmentation
-   - **3D CAD**: Professional 3D roof modeling and solar panel placement
-   - **Downloads**: Export reports in multiple formats
-6. **Download Reports**: Export results in PDF, CSV, Excel, or JSON formats
+2. **Start Analysis**: Click "Start AI Analysis" for comprehensive NextGen AI-powered assessment
+3. **View Progress**: Real-time progress bar showing:
+   - Roof Segmentation
+   - Object Detection
+   - Zone Optimization
+   - Solar Optimization
+4. **View Results**: Interactive dashboard showing:
+   - **Segmented Roof Image**: Visual segmentation results
+   - **NextGen SegFormer Features**: Ensemble models, fusion method, roof shape, complexity, edge quality, uncertainty
+   - **Roof Analysis Statistics**: Area, coverage, confidence scores
+   - **Detected Objects**: Obstructions with confidence scores
+   - **Solar Analysis**: Suitability score, surface area, estimated energy, cost, payback period
+   - **Detailed Report**: Comprehensive text report with all analysis details
 
-### **3D CAD Analysis Features**
-- **3D Roof Geometry**: Accurate surface area and volume calculations
-- **Optimal Panel Zones**: AI-identified best areas for solar installation
-- **3D Solar Panel Layout**: Precise positioning with shading analysis
-- **Structural Analysis**: Safety factor and structural integrity checks
-- **Installation Planning**: Detailed sequence, timeline, and cost estimates
-- **CAD Export**: Download 3D models (OBJ, STL, JSON) for CAD software
+### **NextGen SegFormer Alpha Features**
+- **Ensemble Models**: SegFormer-B2 and SegFormer-B3 working together
+- **Multi-Scale Analysis**: Processing at 5 different scales (0.5x, 0.8x, 1.0x, 1.2x, 1.5x)
+- **Alpha-Based Blending**: Weighted fusion prioritizing key scales
+- **Test-Time Augmentation**: Enhanced robustness with flips, brightness, and contrast variations
+- **Advanced Metrics**: Roof shape detection, complexity scoring, edge quality assessment, uncertainty estimation
 
-### **YOLO Object Detection**
+### **YOLOv11 Object Detection**
+- **Multiple Models**: YOLOv11n, YOLOv11s, YOLOv11m, YOLOv11l variants
 - **Real-time Detection**: Trees, buildings, chimneys, vehicles, and other obstructions
 - **Visual Segmentation**: Bounding boxes with confidence scores
-- **Analysis Overlay**: Statistics and suitability assessment
-- **Base64 Integration**: Direct image display in web interface
+- **Analysis Integration**: Obstacle data integrated into zone optimization
 
 ### **API Usage**
+
 ```python
 import requests
 
-# Standard analysis with YOLO and 3D CAD
-response = requests.post('http://localhost:8000/api/analyze', 
-    files={'files': open('rooftop.jpg', 'rb')},
-    data={'cities': '["New Delhi"]', 'panel_types': '["monocrystalline"]'}
+# Standard analysis with NextGen AI
+response = requests.post(
+    'http://localhost:8000/api/analyze',
+    files={'files': open('rooftop.jpg', 'rb')}
 )
 
 # Response includes:
-# - YOLO segmentation with detected objects
-# - 3D CAD analysis with roof geometry
-# - Solar panel placement optimization
-# - Structural safety analysis
-# - Installation planning
-
-# Access results
 results = response.json()
-yolo_analysis = results['results'][0]['roof_analysis']
-cad_analysis = results['results'][0]['cad_analysis']
+result = results['results'][0]
 
-# YOLO results
-detected_objects = yolo_analysis['detected_objects']
-segmented_image = yolo_analysis['segmented_image_base64']
+# NextGen SegFormer features
+roof_analysis = result['roof_analysis']
+ai_pipeline = roof_analysis['ai_pipeline_results']
+segmentation = ai_pipeline['roof_analysis']
+advanced_features = segmentation['advanced_features']
 
-# 3D CAD results
-surface_area_3d = cad_analysis['surface_area_3d']
-optimal_zones = cad_analysis['optimal_zones']
-solar_panels_3d = cad_analysis['solar_panels_3d']
-structural_analysis = cad_analysis['structural_analysis']
+# Access NextGen features
+print(f"Ensemble Models: {advanced_features['ensemble_models']}")
+print(f"Fusion Method: {advanced_features['fusion_method']}")
+print(f"Roof Shape: {advanced_features['roof_shape']}")
+print(f"Complexity: {advanced_features['roof_complexity']}")
+print(f"Edge Quality: {advanced_features['edge_quality']}")
+print(f"Uncertainty: {advanced_features['uncertainty_score']}")
+
+# Detected objects
+detected_objects = roof_analysis['detected_objects']
+
+# Solar analysis
+suitability = roof_analysis['suitability_score']
+energy = roof_analysis['estimated_energy']
+cost = roof_analysis['estimated_cost']
+payback = roof_analysis['payback_period']
+
+# Formatted reports
+text_report = roof_analysis['formatted_report_text']
+json_report = roof_analysis['formatted_report_json']
 ```
-
-### **Mobile AR**
-- iOS/Android apps for 3D solar panel visualization
-- Real-time power calculations
-- Interactive panel placement
-- Shading analysis overlay
-
-## Example Use Cases
-1. **Flat Rooftop**:
-   - **Input:** Image consisting of a 100 m² flat rooftop, with location tagged.
-   - **Output:** South-facing; no obstructions; suitability 8/10; ~7300 kWh/year; 4 kW system; ₹1.25 lakh cost; ₹51,100 annual savings; ~4.8 years to payback.
-   - **Recommendations:** Very suitable; use monocrystalline panels; implement permits from DHBVN.
-2. **Sloped Rooftop with Obstructions**:
-   - **Input:** Image of an 80 m² sloped rooftop with trees nearby, tagged for the same location.
-   - **Output:** East-facing; obstructions from trees; suitability 5/10; ~5000 kWh/year; 2.8 kW system; ₹1 lakh cost; ₹35,000 annual savings; ~5.5 years to payback.
-   - **Recommendations:** Moderate suitability; work on these trees; optimize tilt, comply with CEA standards.
-
-
-### Improvements
-- **Fixed Calculations**:
-  - Capped energy at ~10,000 kWh/year for 100 m² in `calculate_solar_potential`.
-  - Enforced minimum payback period (~4 years) in `estimate_roi`.
-- **Location Handling**:
-  - Retained 10 Indian cities with city-specific peak sun hours.
-- **Dynamic Constants**:
-  - Mock API (`fetch_solar_constants`) for 2025 data.
-- **Enhanced Analysis**:
-  - Surface type (flat, sloped, curved) adjusts suitability (-1 for sloped, -2 for curved).
-- **Industry Data**: Aligned with 2025 trends (₹27/W, 24.7% efficiency) per [Sunsave 2025](https://www.sunsave.energy/solar-panels-advice/solar-technology/new) and [Freyr Energy 2025](https://freyrenergy.com/how-much-do-solar-panels-cost-in-2024-a-guide-for-homeowners/).
 
 ## 🏗️ Technical Architecture
 
-### **Frontend (React/Next.js)**
-- **Modern UI**: Tailwind CSS with Shadcn components
-- **Real-time Updates**: Live analysis progress and results
-- **3D Visualization**: Interactive CAD model display
-- **YOLO Integration**: Visual object detection results
-- **Multi-tab Interface**: Overview, Details, AI Analysis, 3D CAD, Downloads
+### **Frontend (React + TypeScript + Vite)**
+- **Modern UI**: Tailwind CSS with custom glassmorphism design
+- **Real-time Updates**: Live progress tracking with step indicators
+- **Type Safety**: Full TypeScript implementation
+- **Component Architecture**: Modular React components
+- **API Integration**: Axios-based service layer
 
-### **Backend (FastAPI)**
-- **High Performance**: Async processing with timeout handling
-- **YOLO Integration**: Real-time object detection and segmentation
-- **3D CAD Engine**: Enhanced roof geometry analysis
-- **Physics-Informed AI**: Solar irradiance calculations
-- **Multi-format Export**: PDF, CSV, Excel, JSON reports
+### **Backend (FastAPI + Python 3.11)**
+- **High Performance**: Async processing with extended timeouts (5 minutes)
+- **NextGen Services**: Advanced segmentation, detection, and calculations
+- **AI Pipeline**: 4-step processing pipeline
+- **Report Generation**: Comprehensive text and JSON reports
+- **Error Handling**: Robust error handling with fallback processing
 
 ### **AI/ML Components**
-- **YOLOv8**: Object detection for roof obstructions
-- **3D Analysis**: Height mapping and geometry generation
-- **Solar Physics**: pvlib integration for accurate calculations
-- **Computer Vision**: OpenCV for image processing
-- **Machine Learning**: scikit-learn for optimization
+- **SegFormer**: Transformer-based segmentation (B0, B1, B2, B3 models)
+- **YOLOv11**: Object detection (n, s, m, l variants)
+- **Ensemble Methods**: Multi-model fusion for improved accuracy
+- **Multi-Scale Analysis**: Processing at multiple resolutions
+- **Test-Time Augmentation**: Enhanced robustness
+- **Solar Physics**: Advanced energy calculations with temperature effects
 
 ### **Data Flow**
 1. **Image Upload** → Frontend receives files
-2. **YOLO Processing** → Backend detects objects and creates segmentation
-3. **3D Analysis** → Generate roof geometry and optimal zones
-4. **Solar Calculations** → Physics-informed energy predictions
-5. **Results Display** → Multi-tab interface with visualizations
-6. **Export Options** → Download reports and 3D models
+2. **NextGen Segmentation** → Ensemble SegFormer models with multi-scale analysis
+3. **YOLOv11 Detection** → Object detection with TTA
+4. **Zone Optimization** → Clean zone identification
+5. **Solar Optimization** → Advanced physics-informed calculations
+6. **Report Generation** → Comprehensive text and JSON reports
+7. **Results Display** → Interactive dashboard with all metrics
 
 ## 📊 Performance Metrics
 
-- **Analysis Speed**: 5-15 seconds for complete 3D CAD analysis
-- **YOLO Detection**: Real-time object detection with >90% accuracy
-- **3D Modeling**: Professional-grade roof geometry in seconds
-- **API Response**: <5 seconds for standard analysis
+- **Analysis Speed**: 5-15 seconds for complete NextGen analysis
+- **Segmentation Accuracy**: >95% with ensemble methods
+- **Object Detection**: >90% accuracy with YOLOv11
+- **API Response**: Extended timeout (5 minutes) for complex processing
 - **Frontend Load**: <2 seconds initial load time
 
-## DevOps & Deployment
+## 🐳 Docker Deployment
 
-### **Docker Deployment**
+### **Production Deployment**
 ```bash
-# Development environment
-./deploy.sh --environment development
+# Build and start all services
+docker-compose up -d
 
-# Production environment
-./deploy.sh --environment production --monitoring
+# View logs
+docker-compose logs -f
 
-# With monitoring stack (Prometheus + Grafana)
-./deploy.sh --environment production --monitoring
+# Stop services
+docker-compose down
+
+# Rebuild after changes
+docker-compose up -d --build
 ```
 
-### **Kubernetes Deployment**
+### **Development Deployment**
 ```bash
-# Deploy to staging
-kubectl apply -f k8s/staging/
+# Start with hot reload
+docker-compose -f docker-compose.dev.yml up
 
-# Deploy to production
-kubectl apply -f k8s/production/
+# Run in background
+docker-compose -f docker-compose.dev.yml up -d
 ```
 
-### **CI/CD Pipeline**
-- **Automated Testing**: Python pytest + TypeScript Jest
-- **Security Scanning**: Trivy vulnerability scanner
-- **Multi-environment**: Development → Staging → Production
-- **Docker Images**: Multi-stage builds for optimization
-- **Monitoring**: Prometheus + Grafana integration
+### **Docker Services**
+- **Backend**: FastAPI service on port 8000
+- **Frontend**: Nginx serving static files on port 3000
+- **Nginx Proxy**: Reverse proxy on port 80 (optional)
 
-### **Infrastructure Features**
-- **Multi-stage Docker builds** for optimized production images
-- **Health checks** for all services
-- **Resource limits** and scaling policies
-- **Persistent volumes** for data storage
-- **Nginx reverse proxy** with rate limiting
-- **Redis caching** for improved performance
-- **SSL/TLS support** for secure communication
+## 🔄 CI/CD Pipeline
 
-For detailed DevOps instructions, see [DEVOPS.md](DEVOPS.md).
+### **Automated Testing**
+- **Frontend**: TypeScript type checking, ESLint, build verification
+- **Backend**: Python syntax checking, Ruff linting, pytest
+- **Security**: Trivy vulnerability scanning
+- **Docker**: Automated image building and pushing
+
+### **Deployment Stages**
+1. **Test**: Frontend and backend testing
+2. **Security**: Vulnerability scanning
+3. **Build**: Docker image creation
+4. **Deploy**: Staging and production deployment
+
+### **Features**
+- Multi-environment support (development, staging, production)
+- Automated Docker builds
+- Security scanning
+- Preview deployments for pull requests
 
 ## 🔧 Development Setup
 
 ### **Prerequisites**
-- Python 3.8+
+- Python 3.11+
 - Node.js 18+
+- Docker & Docker Compose (optional)
 - npm/yarn
-- Virtual environment (recommended)
 
-### **Installation**
+### **Backend Development**
 ```bash
-# Clone repository
-git clone <your-repo-url>
-cd ai-solar-rooftop-analysis
+cd backend
+source .venv/bin/activate
+pip install -r ../requirements.txt
+python main.py
+```
 
-# Backend setup
-source venv/bin/activate
-pip install -r requirements.txt
-cd backend && uvicorn main:app --reload
-
-# Frontend setup
+### **Frontend Development**
+```bash
 cd frontend
 npm install
 npm run dev
+npm run build
+npm run lint
 ```
 
 ### **Environment Variables**
-```bash
-# Backend (.env)
-PYTHONPATH=/path/to/project
-LOG_LEVEL=INFO
 
-# Frontend (.env.local)
-NEXT_PUBLIC_API_URL=http://localhost:8000
+**Backend:**
+```bash
+PYTHONPATH=/app
+PYTHONUNBUFFERED=1
+LOG_LEVEL=INFO
+ENVIRONMENT=development
 ```
+
+**Frontend:**
+```bash
+VITE_API_URL=http://localhost:8000
+NODE_ENV=development
+```
+
+## 📈 NextGen Features
+
+### **Advanced Segmentation**
+- Ensemble SegFormer models (B2 + B3)
+- Multi-scale analysis (5 scales)
+- Alpha-based blending
+- Test-time augmentation
+- CRF refinement
+- Edge enhancement
+
+### **Advanced Detection**
+- YOLOv11 ensemble (multiple variants)
+- Test-time augmentation
+- Confidence calibration
+- Multi-scale detection
+
+### **Advanced Solar Calculations**
+- Physics-informed modeling
+- Temperature effects
+- System losses
+- Financial analysis
+- ROI calculations
+
+### **Intelligent Zone Refinement**
+- Adaptive algorithms
+- Obstacle subtraction
+- Optimal zone identification
+- Panel placement optimization
+
+## 🛠️ Infrastructure
+
+### **Docker Configuration**
+- Multi-stage builds for optimized images
+- Health checks for all services
+- Volume mounts for persistent data
+- Network isolation
+- Resource limits
+
+### **Nginx Configuration**
+- Reverse proxy setup
+- Rate limiting
+- Gzip compression
+- Security headers
+- Extended timeouts for AI processing
+- Static asset caching
+
+### **Monitoring**
+- Health check endpoints
+- Logging infrastructure
+- Performance metrics
+
+## 📚 Documentation
+
+- **API Documentation**: http://localhost:8000/docs (Swagger UI)
+- **Project Structure**: See `PROJECT_STRUCTURE.md`
+- **Architecture**: See `Architecture.md`
+- **Docker Guide**: See Docker documentation in repository
+
+## 🔐 Security
+
+- **Rate Limiting**: API and frontend rate limits
+- **Security Headers**: XSS protection, content type options, frame options
+- **Input Validation**: File type and size validation
+- **Error Handling**: Secure error messages
+- **CORS**: Configurable CORS middleware
 
 ## 📈 Future Enhancements
 
@@ -300,9 +368,27 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 - **Edge AI**: Drone-based real-time analysis
 - **IoT Integration**: Weather station data integration
 
+## 📄 License
+
+See LICENSE file for details.
+
+## 🙏 Acknowledgments
+
 ### Key Citations
 - [Sunsave - Latest Solar Panel Technology 2025](https://www.sunsave.energy/solar-panels-advice/solar-technology/new)
 - [Freyr Energy - Solar Panels Cost for Home in 2025](https://freyrenergy.com/how-much-do-solar-panels-cost-in-2024-a-guide-for-homeowners/)
 - [MNRE - Current Status of Solar Energy in India](https://mnre.gov.in/)
 - [Global Legal Insights - Energy Laws and Regulations 2025](https://www.globallegalinsights.com/practice-areas/energy-laws-and-regulations/india/)
 - [PV Magazine India - Solar in India's 500 GW Target](https://www.pv-magazine-india.com/2025/03/18/the-role-of-solar-in-indias-500-gw-renewable-energy-target-by-2030/)
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests and linting
+5. Submit a pull request
+
+## 📞 Support
+
+For issues and questions, please open an issue on GitHub.

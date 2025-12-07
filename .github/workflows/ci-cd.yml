@@ -193,17 +193,6 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build and push backend image
-      uses: docker/build-push-action@v5
-      with:
-        context: ./backend
-        push: ${{ github.event_name != 'pull_request' }}
-        tags: |
-          ${{ secrets.DOCKER_USERNAME }}/ai-solar-backend:latest
-          ${{ secrets.DOCKER_USERNAME }/ai-solar-backend:${{ github.sha }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
-
     - name: Build and push frontend image
       uses: docker/build-push-action@v5
       with:
@@ -258,7 +247,6 @@ jobs:
     - name: Deploy Docker containers (Production)
       run: |
         echo "✅ Docker images available for production deployment"
-        echo "Backend: ${{ secrets.DOCKER_USERNAME }}/ai-solar-backend:latest"
         echo "Frontend: ${{ secrets.DOCKER_USERNAME }}/ai-solar-frontend:latest"
         # Add your production deployment commands here
         # Example: docker-compose -f docker-compose.yml up -d
