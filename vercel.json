@@ -4,12 +4,6 @@
   "devCommand": "cd frontend && npm run dev",
   "installCommand": "cd frontend && npm ci",
   "framework": "vite",
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "https://api.your-domain.com/api/$1"
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",
