@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # Backend API Service (Development)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ai-solar-backend-dev
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=DEBUG
+      - ENVIRONMENT=development
+    volumes:
+      - ./backend:/app
+      - ./backend/uploads:/app/uploads
+      - ./outputs:/app/outputs
+    command: python main.py
+    restart: unless-stopped
+    networks:
+      - solar-network-dev
+
+  # Frontend Service (Development)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: ai-solar-frontend-dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost:8000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm run dev
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - solar-network-dev
+
+networks:
+  solar-network-dev:
+    driver: bridge
+

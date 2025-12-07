@@ -19,9 +19,14 @@ function App() {
   }
 
   const handleAnalysisComplete = (analysisResults: any) => {
-    setResults(analysisResults)
     setIsAnalyzing(false)
-    showToast('✨ Analysis completed successfully!', 'success')
+    if (analysisResults) {
+      setResults(analysisResults)
+      showToast('✨ Analysis completed successfully!', 'success')
+    } else {
+      // Error case - results already cleared
+      setResults(null)
+    }
   }
 
   const handleAnalysisStart = () => {

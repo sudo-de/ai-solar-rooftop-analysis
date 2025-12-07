@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Solar Rooftop Analysis - Test Upload</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+        .upload-area {
+            border: 3px dashed #007bff;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: rgba(0, 123, 255, 0.05);
+        }
+        .upload-area:hover {
+            border-color: #0056b3;
+            background: rgba(0, 123, 255, 0.1);
+        }
+        .upload-area.dragover {
+            border-color: #28a745;
+            background: rgba(40, 167, 69, 0.1);
+        }
+        .btn-upload {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-upload:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+        }
+        .result-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 5px solid #28a745;
+        }
+        .image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .analysis-data {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .report-container {
+            background: #ffffff;
+            border: 1px solid #dee2e6;
+            line-height: 1.6;
+        }
+        .card {
+            transition: transform 0.2s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        .step-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+        .step-item.active {
+            color: #007bff;
+            font-weight: 600;
+        }
+        .step-item.completed {
+            color: #28a745;
+        }
+        .step-item i {
+            width: 20px;
+            text-align: center;
+        }
+        .progress {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .progress-bar {
+            font-weight: 600;
+            font-size: 0.85em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h1 class="display-4 text-primary mb-3">🪐 AI Solar Rooftop Analysis</h1>
+                <p class="lead text-muted">Upload roof photos to test the backend analysis API</p>
+                <hr class="my-4">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="upload-area" id="uploadArea">
+                    <div class="mb-4">
+                        <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                        <h4>Drag & Drop Images Here</h4>
+                        <p class="text-muted">Or click to browse files</p>
+                        <small class="text-muted">Supported: JPG, PNG, BMP, TIFF (Max 10MB each)</small>
+                    </div>
+
+                    <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
+                    <button class="btn btn-upload btn-lg" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-folder-open me-2"></i>Choose Files
+                    </button>
+                </div>
+
+                <div class="mt-3">
+                    <button class="btn btn-success btn-lg w-100" id="uploadBtn" onclick="uploadFiles()" disabled>
+                        <i class="fas fa-rocket me-2"></i>Analyze Rooftop
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div id="fileList" class="mb-4">
+                    <h5>Selected Files:</h5>
+                    <div id="filePreview" class="text-muted">No files selected</div>
+                </div>
+
+                <div id="results" style="display: none;">
+                    <div class="result-card">
+                        <h5 class="text-success mb-3">
+                            <i class="fas fa-check-circle me-2"></i>Analysis Complete!
+                        </h5>
+                        <div id="analysisResults"></div>
+                    </div>
+                </div>
+
+                <div id="loading" style="display: none;">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary mb-3" role="status">
+                            <span class="visually-hidden">Analyzing...</span>
+                        </div>
+                        <p class="text-primary fw-bold mb-2">Analyzing your rooftop photos...</p>
+                        <small class="text-muted d-block mb-3">This may take a few seconds</small>
+                        
+                        <!-- Progress Bar -->
+                        <div class="progress mb-2" style="height: 25px;">
+                            <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" 
+                                 role="progressbar" 
+                                 style="width: 0%" 
+                                 aria-valuenow="0" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                                <span id="progressText">0%</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Progress Steps -->
+                        <div id="progressSteps" class="mt-3">
+                            <div class="step-item" data-step="1">
+                                <i class="fas fa-check-circle text-success" style="display: none;"></i>
+                                <i class="fas fa-spinner fa-spin text-primary"></i>
+                                <span class="ms-2">Roof Segmentation</span>
+                            </div>
+                            <div class="step-item" data-step="2">
+                                <i class="fas fa-circle text-muted"></i>
+                                <span class="ms-2">Object Detection</span>
+                            </div>
+                            <div class="step-item" data-step="3">
+                                <i class="fas fa-circle text-muted"></i>
+                                <span class="ms-2">Zone Optimization</span>
+                            </div>
+                            <div class="step-item" data-step="4">
+                                <i class="fas fa-circle text-muted"></i>
+                                <span class="ms-2">Solar Optimization</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="error" style="display: none;">
+                    <div class="alert alert-danger">
+                        <h6><i class="fas fa-exclamation-triangle me-2"></i>Error Occurred</h6>
+                        <div id="errorMessage"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
+
+    <script>
+        let selectedFiles = [];
+
+        // File input handling
+        document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+        document.getElementById('uploadArea').addEventListener('click', () => document.getElementById('fileInput').click());
+
+        // Drag and drop functionality
+        const uploadArea = document.getElementById('uploadArea');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        uploadArea.addEventListener('drop', handleDrop, false);
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function highlight() {
+            uploadArea.classList.add('dragover');
+        }
+
+        function unhighlight() {
+            uploadArea.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            handleFiles(files);
+        }
+
+        function handleFiles(files) {
+            selectedFiles = Array.from(files);
+            updateFilePreview();
+            document.getElementById('uploadBtn').disabled = selectedFiles.length === 0;
+        }
+
+        function updateFilePreview() {
+            const preview = document.getElementById('filePreview');
+            if (selectedFiles.length === 0) {
+                preview.innerHTML = '<span class="text-muted">No files selected</span>';
+                return;
+            }
+
+            let html = '<div class="row">';
+            selectedFiles.forEach((file, index) => {
+                const isImage = file.type.startsWith('image/');
+                html += `
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body p-2">
+                                ${isImage ? `<img src="${URL.createObjectURL(file)}" class="img-fluid rounded mb-2" style="height: 100px; object-fit: cover;">` : ''}
+                                <small class="text-truncate d-block">${file.name}</small>
+                                <small class="text-muted">${formatFileSize(file.size)}</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            preview.innerHTML = html;
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Progress tracking
+        let progressInterval = null;
+        let currentProgress = 0;
+        let currentStep = 0;
+
+        function updateProgress(percent, step = null) {
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            
+            if (percent !== undefined) {
+                currentProgress = Math.min(100, Math.max(0, percent));
+                progressBar.style.width = currentProgress + '%';
+                progressBar.setAttribute('aria-valuenow', currentProgress);
+                progressText.textContent = Math.round(currentProgress) + '%';
+            }
+            
+            if (step !== null) {
+                updateStep(step);
+            }
+        }
+
+        function updateStep(step) {
+            currentStep = step;
+            const steps = document.querySelectorAll('.step-item');
+            steps.forEach((stepEl, index) => {
+                const stepNum = index + 1;
+                const checkIcon = stepEl.querySelector('.fa-check-circle');
+                const spinnerIcon = stepEl.querySelector('.fa-spinner');
+                const circleIcon = stepEl.querySelector('.fa-circle');
+                
+                // Reset all
+                stepEl.classList.remove('active', 'completed');
+                if (checkIcon) checkIcon.style.display = 'none';
+                if (spinnerIcon) spinnerIcon.style.display = 'none';
+                if (circleIcon) circleIcon.style.display = 'inline-block';
+                
+                if (stepNum < step) {
+                    // Completed
+                    stepEl.classList.add('completed');
+                    if (checkIcon) checkIcon.style.display = 'inline-block';
+                    if (spinnerIcon) spinnerIcon.style.display = 'none';
+                    if (circleIcon) circleIcon.style.display = 'none';
+                } else if (stepNum === step) {
+                    // Active
+                    stepEl.classList.add('active');
+                    if (checkIcon) checkIcon.style.display = 'none';
+                    if (spinnerIcon) spinnerIcon.style.display = 'inline-block';
+                    if (circleIcon) circleIcon.style.display = 'none';
+                } else {
+                    // Pending
+                    if (circleIcon) circleIcon.style.display = 'inline-block';
+                }
+            });
+        }
+
+        function simulateProgress() {
+            // Simulate progress during upload/processing
+            let progress = 0;
+            progressInterval = setInterval(() => {
+                if (progress < 90) {
+                    progress += Math.random() * 3;
+                    updateProgress(progress);
+                }
+            }, 500);
+        }
+
+        function stopProgress() {
+            if (progressInterval) {
+                clearInterval(progressInterval);
+                progressInterval = null;
+            }
+            updateProgress(100);
+            setTimeout(() => {
+                updateStep(5); // All steps completed
+            }, 500);
+        }
+
+        async function uploadFiles() {
+            if (selectedFiles.length === 0) return;
+
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('uploadBtn').disabled = true;
+
+            // Reset progress
+            updateProgress(0);
+            updateStep(1);
+            simulateProgress();
+
+            try {
+                const formData = new FormData();
+
+                // Add files
+                selectedFiles.forEach(file => {
+                    formData.append('files', file);
+                });
+
+                // Add optional parameters
+                formData.append('segmentation_method', 'yolo');
+
+                // Update progress for upload
+                updateProgress(10, 1);
+
+                const response = await fetch('http://localhost:8000/api/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    stopProgress();
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                // Update progress steps as processing happens
+                updateProgress(25, 1); // Roof segmentation
+                setTimeout(() => updateProgress(50, 2), 1000); // Object detection
+                setTimeout(() => updateProgress(75, 3), 2000); // Zone optimization
+                setTimeout(() => updateProgress(90, 4), 3000); // Solar optimization
+
+                const result = await response.json();
+                
+                stopProgress();
+                displayResults(result);
+
+            } catch (error) {
+                stopProgress();
+                showError(error.message);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('uploadBtn').disabled = false;
+            }
+        }
+
+        function displayResults(data) {
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+
+            let html = `<p class="text-success fw-bold mb-4">${data.message}</p>`;
+
+            if (data.results && data.results.length > 0) {
+                data.results.forEach((result, index) => {
+                    const roof = result.roof_analysis || {};
+                    const cad = result.cad_analysis || {};
+                    const aiResults = roof.ai_pipeline_results || {};
+                    
+                    // Get formatted report if available
+                    const textReport = roof.formatted_report_text || '';
+                    const jsonReport = roof.formatted_report_json || {};
+                    
+                    html += `
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">📸 ${result.filename}</h5>
+                            </div>
+                            <div class="card-body">
+                                ${textReport ? `
+                                <div class="mb-4">
+                                    <h5 class="text-primary mb-3">📊 Complete Analysis Report</h5>
+                                    <div class="report-container" style="background: #f8f9fa; padding: 20px; border-radius: 8px; font-family: 'Courier New', monospace; white-space: pre-wrap; max-height: 600px; overflow-y: auto; font-size: 0.85em; line-height: 1.6;">
+${textReport}
+                                    </div>
+                                </div>
+                                ` : ''}
+                                
+                                ${aiResults.roof_analysis && aiResults.roof_analysis.advanced_features ? `
+                                <div class="mb-4">
+                                    <div class="card border-primary">
+                                        <div class="card-header bg-primary text-white">
+                                            <h6 class="mb-0">🚀 NextGen SegFormer Alpha Features</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <h6 class="text-primary">📐 Multi-Scale Analysis</h6>
+                                                    <ul class="list-unstyled small">
+                                                        <li><strong>Total Scales:</strong> ${aiResults.roof_analysis.advanced_features.num_scales || aiResults.roof_analysis.advanced_features.scales_analyzed?.length || 'N/A'}</li>
+                                                        <li><strong>Scales:</strong> ${aiResults.roof_analysis.advanced_features.scales_analyzed ? aiResults.roof_analysis.advanced_features.scales_analyzed.map(s => s.toFixed(2) + 'x').join(', ') : 'N/A'}</li>
+                                                        ${aiResults.roof_analysis.advanced_features.alpha_scales ? `
+                                                        <li class="mt-2"><strong>⭐ Alpha Scales:</strong> 
+                                                            <span class="badge bg-warning text-dark">${aiResults.roof_analysis.advanced_features.alpha_scales.map(s => s.toFixed(1) + 'x').join(', ')}</span>
+                                                        </li>
+                                                        ` : ''}
+                                                        ${aiResults.roof_analysis.advanced_features.alpha_blending ? `
+                                                        <li><strong>Alpha Blending:</strong> <span class="badge bg-success">✅ Enabled</span></li>
+                                                        ` : ''}
+                                                    </ul>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h6 class="text-primary">🔬 Advanced Features</h6>
+                                                    <ul class="list-unstyled small">
+                                                        ${aiResults.roof_analysis.advanced_features.ensemble_models ? `
+                                                        <li><strong>Ensemble Models:</strong> ${aiResults.roof_analysis.advanced_features.ensemble_models.length} models</li>
+                                                        <li class="small text-muted">${aiResults.roof_analysis.advanced_features.ensemble_models.join(', ')}</li>
+                                                        ` : ''}
+                                                        ${aiResults.roof_analysis.advanced_features.tta_enabled ? `
+                                                        <li class="mt-2"><strong>TTA:</strong> <span class="badge bg-info">✅ Enabled</span></li>
+                                                        ` : ''}
+                                                        ${aiResults.roof_analysis.advanced_features.fusion_method ? `
+                                                        <li><strong>Fusion:</strong> ${aiResults.roof_analysis.advanced_features.fusion_method.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</li>
+                                                        ` : ''}
+                                                        ${aiResults.roof_analysis.advanced_features.roof_shape ? `
+                                                        <li><strong>Roof Shape:</strong> ${aiResults.roof_analysis.advanced_features.roof_shape}</li>
+                                                        ` : ''}
+                                                        ${aiResults.roof_analysis.advanced_features.edge_quality ? `
+                                                        <li><strong>Edge Quality:</strong> ${aiResults.roof_analysis.advanced_features.edge_quality.toFixed(3)}</li>
+                                                        ` : ''}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                ` : ''}
+                                
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <div class="card border-info">
+                                            <div class="card-header bg-info text-white">
+                                                <h6 class="mb-0">📐 Image Details</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <ul class="list-unstyled mb-0">
+                                                    <li class="mb-2"><strong>Dimensions:</strong> ${result.image_dimensions[0]} × ${result.image_dimensions[1]} pixels</li>
+                                                    <li class="mb-2"><strong>File Size:</strong> ${formatFileSize(result.file_size)}</li>
+                                                    <li class="mb-2"><strong>Upload Time:</strong> ${new Date(result.upload_time).toLocaleString()}</li>
+                                                    <li><strong>Analysis ID:</strong> <small>${result.id}</small></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card border-success">
+                                            <div class="card-header bg-success text-white">
+                                                <h6 class="mb-0">⚡ Quick Summary</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <ul class="list-unstyled mb-0">
+                                                    <li class="mb-2"><strong>Suitability Score:</strong> <span class="badge bg-primary">${roof.suitability_score || 'N/A'}/10</span></li>
+                                                    <li class="mb-2"><strong>Surface Area:</strong> ${roof.surface_area ? roof.surface_area.toFixed(2) : 'N/A'} m²</li>
+                                                    <li class="mb-2"><strong>Estimated Energy:</strong> ${roof.estimated_energy ? roof.estimated_energy.toLocaleString() : 'N/A'} kWh/year</li>
+                                                    <li class="mb-2"><strong>System Cost:</strong> ₹${roof.estimated_cost ? roof.estimated_cost.toLocaleString() : 'N/A'}</li>
+                                                    <li><strong>Payback Period:</strong> ${roof.payback_period ? roof.payback_period.toFixed(1) : 'N/A'} years</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <div class="card border-warning">
+                                            <div class="card-header bg-warning text-dark">
+                                                <h6 class="mb-0">🔍 Solar Analysis</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                ${roof.segmented_image_base64 ? `
+                                                <div class="mb-3 text-center">
+                                                    <img src="${roof.segmented_image_base64}" class="img-fluid rounded shadow" style="max-height: 300px;" alt="Segmented Roof">
+                                                    <p class="text-muted small mt-2">Segmented Roof Image</p>
+                                                </div>
+                                                ` : ''}
+                                                
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <h6>Detection Results:</h6>
+                                                        <ul class="list-unstyled">
+                                                            <li><strong>Objects Detected:</strong> ${roof.detected_objects ? roof.detected_objects.length : 0}</li>
+                                                            ${roof.detected_objects && roof.detected_objects.length > 0 ? `
+                                                            <li class="mt-2"><strong>Detected Items:</strong>
+                                                                <ul class="small">
+                                                                    ${roof.detected_objects.slice(0, 5).map(obj => 
+                                                                        `<li>${obj.type || 'Unknown'} (${(obj.confidence * 100).toFixed(1)}%)</li>`
+                                                                    ).join('')}
+                                                                    ${roof.detected_objects.length > 5 ? `<li><em>...and ${roof.detected_objects.length - 5} more</em></li>` : ''}
+                                                                </ul>
+                                                            </li>
+                                                            ` : '<li class="text-muted">No obstacles detected</li>'}
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <h6>Energy Analysis:</h6>
+                                                        <ul class="list-unstyled">
+                                                            <li><strong>Estimated Production:</strong> ${roof.estimated_energy ? roof.estimated_energy.toLocaleString() : 'N/A'} kWh/year</li>
+                                                            <li><strong>System Capacity:</strong> ${roof.estimated_cost && roof.estimated_energy ? (roof.estimated_cost / 40000).toFixed(2) : 'N/A'} kW</li>
+                                                            <li><strong>Annual Savings:</strong> ₹${roof.estimated_energy ? (roof.estimated_energy * 8).toLocaleString() : 'N/A'}</li>
+                                                            <li><strong>ROI:</strong> ${roof.payback_period ? ((1 / roof.payback_period) * 100).toFixed(1) : 'N/A'}%</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                
+                                                ${aiResults.processing_summary ? `
+                                                <hr>
+                                                <div class="small text-muted">
+                                                    <strong>Processing Info:</strong> 
+                                                    ${aiResults.processing_summary.total_time_seconds ? `Completed in ${aiResults.processing_summary.total_time_seconds.toFixed(2)}s` : ''}
+                                                    ${aiResults.processing_summary.ai_models_used ? ` | Models: ${aiResults.processing_summary.ai_models_used.join(', ')}` : ''}
+                                                </div>
+                                                ` : ''}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="card border-danger">
+                                            <div class="card-header bg-danger text-white">
+                                                <h6 class="mb-0">🏗️ CAD Analysis</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <h6>3D Surface Analysis:</h6>
+                                                        <ul class="list-unstyled">
+                                                            <li><strong>Surface Area:</strong> ${cad.surface_area_3d ? cad.surface_area_3d.toFixed(2) : 'N/A'} m²</li>
+                                                            <li><strong>Optimal Zones:</strong> ${cad.optimal_zones ? cad.optimal_zones.length : 0}</li>
+                                                            <li><strong>Solar Panels (3D):</strong> ${cad.solar_panels_3d ? cad.solar_panels_3d.length : 0}</li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <h6>Structural Analysis:</h6>
+                                                        <ul class="list-unstyled">
+                                                            ${cad.structural_analysis ? `
+                                                            <li><strong>Safety Factor:</strong> ${cad.structural_analysis.safety_factor || 'N/A'}</li>
+                                                            <li><strong>Integrity:</strong> <span class="badge bg-success">${cad.structural_analysis.structural_integrity || 'N/A'}</span></li>
+                                                            ` : '<li class="text-muted">No structural data available</li>'}
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <h6>Zone Details:</h6>
+                                                        ${cad.optimal_zones && cad.optimal_zones.length > 0 ? `
+                                                        <ul class="list-unstyled small">
+                                                            ${cad.optimal_zones.slice(0, 3).map(zone => 
+                                                                `<li>Zone ${zone.id}: ${zone.estimated_panels ? zone.estimated_panels.estimated_count : 'N/A'} panels</li>`
+                                                            ).join('')}
+                                                            ${cad.optimal_zones.length > 3 ? `<li><em>...and ${cad.optimal_zones.length - 3} more zones</em></li>` : ''}
+                                                        </ul>
+                                                        ` : '<p class="text-muted small">No optimal zones identified</p>'}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            document.getElementById('analysisResults').innerHTML = html;
+        }
+
+        function showError(message) {
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('errorMessage').textContent = message;
+        }
+
+        // Check if backend is running
+        window.addEventListener('load', async () => {
+            try {
+                const response = await fetch('http://localhost:8000/health');
+                if (!response.ok) {
+                    showError('Backend server is not running. Please start the backend first.');
+                }
+            } catch (error) {
+                showError('Cannot connect to backend server. Make sure it\'s running on http://localhost:8000');
+            }
+        });
+    </script>
+</body>
+</html>

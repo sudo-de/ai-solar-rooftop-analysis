@@ -12,7 +12,6 @@ const AnalysisForm = ({ onAnalysisStart, onAnalysisComplete, isAnalyzing }: Anal
   const [files, setFiles] = useState<File[]>([])
   const [error, setError] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
-  const [segmentationMethod, setSegmentationMethod] = useState<string>('enhanced_canny')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileChange = (selectedFiles: FileList | null) => {
@@ -85,14 +84,17 @@ const AnalysisForm = ({ onAnalysisStart, onAnalysisComplete, isAnalyzing }: Anal
     setError(null)
 
     try {
-      const results = await analyzeRooftop(files, segmentationMethod)
+      const results = await analyzeRooftop(files)
+      console.log('Analysis results received:', results)
       onAnalysisComplete(results)
       setTimeout(() => {
         document.getElementById('results')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }, 100)
     } catch (err: any) {
-      setError(err.message || 'Failed to analyze rooftop. Please try again.')
       console.error('Analysis error:', err)
+      setError(err.response?.data?.detail || err.message || 'Failed to analyze rooftop. Please try again.')
+      // Reset analyzing state on error
+      onAnalysisComplete(null)
     }
   }
 
@@ -187,50 +189,6 @@ const AnalysisForm = ({ onAnalysisStart, onAnalysisComplete, isAnalyzing }: Anal
         {/* Image Preview */}
         <ImagePreview files={files} onRemove={removeFile} />
 
-        {/* Segmentation Method Selection */}
-        <div className="liquid-glass rounded-xl p-4">
-          <label className="block text-sm font-semibold text-gray-300 mb-3">
-            🏠 Roof Segmentation Method
-          </label>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {/* Computer Vision Methods */}
-            <div>
-              <div className="text-xs text-gray-400 mb-2 font-semibold">Computer Vision</div>
-              <select
-                value={segmentationMethod}
-                onChange={(e) => setSegmentationMethod(e.target.value)}
-                disabled={isAnalyzing}
-                className="w-full px-4 py-2.5 bg-black/40 border border-white/20 rounded-lg text-white focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all disabled:opacity-50"
-              >
-                <option value="enhanced_canny">Enhanced Canny Edge Detection</option>
-                <option value="watershed">Watershed Algorithm</option>
-                <option value="contour_based">Contour-Based Segmentation</option>
-              </select>
-            </div>
-            
-            {/* Deep Learning Methods */}
-            <div>
-              <div className="text-xs text-gray-400 mb-2 font-semibold">Deep Learning Models</div>
-              <select
-                value={segmentationMethod}
-                onChange={(e) => setSegmentationMethod(e.target.value)}
-                disabled={isAnalyzing}
-                className="w-full px-4 py-2.5 bg-black/40 border border-white/20 rounded-lg text-white focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all disabled:opacity-50"
-              >
-                <option value="unet">U-Net (Encoder-Decoder)</option>
-                <option value="deeplabv3plus">DeepLabv3+ (Atrous Convolution)</option>
-                <option value="hrnet">HRNet (High-Resolution Network)</option>
-              </select>
-            </div>
-          </div>
-          <div className="mt-3 text-xs text-gray-400">
-            {['unet', 'deeplabv3plus', 'hrnet'].includes(segmentationMethod) ? (
-              <span className="text-purple-300">🤖 Deep Learning model will be used (requires trained weights)</span>
-            ) : (
-              <span className="text-blue-300">👁️ Computer Vision method will be used</span>
-            )}
-          </div>
-        </div>
 
         {/* Error Message */}
         {error && (
