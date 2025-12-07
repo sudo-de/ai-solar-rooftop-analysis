@@ -180,80 +180,9 @@ jobs:
         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
         vercel-args: '--prod=false --yes'
 
-  # Build Docker Images (validation only)
-  build-docker:
-    needs: [frontend-test, backend-test]
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-    
-    steps:
-    - name: Free disk space
-      run: |
-        echo "Disk space before cleanup:"
-        df -h
-        # Remove unnecessary packages and files
-        sudo rm -rf /usr/share/dotnet
-        sudo rm -rf /usr/local/lib/android
-        sudo rm -rf /opt/ghc
-        sudo rm -rf /opt/hostedtoolcache/CodeQL
-        sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-        # Clean up apt cache
-        sudo apt-get clean
-        sudo rm -rf /var/lib/apt/lists/*
-        # Clean up Docker
-        docker system prune -af --volumes || true
-        docker builder prune -af || true
-        echo "Disk space after cleanup:"
-        df -h
-
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-
-    - name: Build frontend image (validation)
-      uses: docker/build-push-action@v5
-      with:
-        context: ./frontend
-        push: false
-        tags: ai-solar-frontend:test
-        cache-from: type=gha
-        cache-to: type=gha,mode=min
-
-    - name: Clean up after frontend build
-      if: always()
-      run: |
-        docker builder prune -af || true
-        docker image prune -af || true
-        rm -rf /tmp/* 2>/dev/null || true
-        echo "Disk space after frontend build:"
-        df -h
-
-    - name: Build backend image (validation)
-      uses: docker/build-push-action@v5
-      with:
-        context: ./backend
-        file: ./backend/Dockerfile
-        push: false
-        tags: ai-solar-backend:test
-        cache-from: type=gha
-        cache-to: type=gha,mode=min
-
-    - name: Clean up after backend build
-      if: always()
-      run: |
-        docker system prune -af --volumes || true
-        docker builder prune -af || true
-        docker image prune -af || true
-        rm -rf /tmp/* 2>/dev/null || true
-        rm -rf ~/.cache/* 2>/dev/null || true
-        echo "Final disk space:"
-        df -h
-
   # Deploy to Staging
   deploy-staging:
-    needs: [frontend-test, backend-test, security, build-docker]
+    needs: [frontend-test, backend-test, security]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/develop'
     environment: staging
@@ -267,13 +196,12 @@ jobs:
         echo "Deploying to staging environment"
         echo "✅ Frontend and backend tests passed"
         echo "✅ Security scan completed"
-        echo "✅ Docker images built"
         # Add your staging deployment commands here
         # Example: kubectl apply -f k8s/staging/
         
   # Deploy to Production
   deploy-production:
-    needs: [frontend-test, backend-test, security, build-docker]
+    needs: [frontend-test, backend-test, security]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     environment: production
@@ -291,19 +219,10 @@ jobs:
         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
         vercel-args: '--prod=true --yes'
 
-    - name: Deploy Docker containers (Production)
+    - name: Production deployment summary
       run: |
         echo "✅ Production deployment ready"
         echo ""
-        echo "Docker images are built and pushed by the docker_image.yml workflow"
-        echo "To deploy, use the images from Docker Hub or run docker-compose locally"
-        echo ""
-        echo "Example deployment commands:"
-        echo "  docker pull ${{ secrets.DOCKER_USERNAME }}/ai-solar-frontend:latest"
-        echo "  docker pull ${{ secrets.DOCKER_USERNAME }}/ai-solar-backend:latest"
-        echo "  docker-compose -f docker-compose.yml up -d"
-        echo ""
-        echo "Or use Kubernetes:"
-        echo "  kubectl apply -f k8s/production/"
-      continue-on-error: true
+        echo "✅ Frontend deployed to Vercel"
+        echo "✅ All tests and security scans passed"
         
