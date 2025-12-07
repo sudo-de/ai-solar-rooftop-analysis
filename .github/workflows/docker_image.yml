@@ -28,6 +28,25 @@ jobs:
       packages: write
 
     steps:
+    - name: Free disk space
+      run: |
+        echo "Disk space before cleanup:"
+        df -h
+        # Remove unnecessary packages and files
+        sudo rm -rf /usr/share/dotnet
+        sudo rm -rf /usr/local/lib/android
+        sudo rm -rf /opt/ghc
+        sudo rm -rf /opt/hostedtoolcache/CodeQL
+        sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+        # Clean up apt cache
+        sudo apt-get clean
+        sudo rm -rf /var/lib/apt/lists/*
+        # Clean up Docker
+        docker system prune -af --volumes || true
+        docker builder prune -af || true
+        echo "Disk space after cleanup:"
+        df -h
+
     - name: Checkout code
       uses: actions/checkout@v4
 
@@ -96,7 +115,16 @@ jobs:
         push: false
         tags: ${{ steps.tags.outputs.backend_test_tag }}
         cache-from: type=gha
-        cache-to: type=gha,mode=min
+        # Don't export cache to save disk space
+
+    - name: Clean up after build
+      if: always()
+      run: |
+        docker builder prune -af || true
+        docker image prune -af || true
+        rm -rf /tmp/* 2>/dev/null || true
+        echo "Disk space after build:"
+        df -h
 
     - name: Push backend image to Docker Hub
       if: github.event_name != 'pull_request' && (github.event.inputs.push_to_registry == 'true' || github.event.inputs.push_to_registry == '') && steps.docker-creds.outputs.has_creds == 'true'
@@ -107,7 +135,17 @@ jobs:
         push: true
         tags: ${{ steps.tags.outputs.backend_tag }}
         cache-from: type=gha
-        cache-to: type=gha,mode=min
+        # Don't export cache to save disk space
+
+    - name: Final cleanup
+      if: always()
+      run: |
+        docker system prune -af --volumes || true
+        docker builder prune -af || true
+        docker image prune -af || true
+        rm -rf /tmp/* 2>/dev/null || true
+        echo "Final disk space:"
+        df -h
 
     - name: Image summary
       env:
