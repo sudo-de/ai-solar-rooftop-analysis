@@ -7,7 +7,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "http://localhost:8000/api/$1"
+      "destination": "https://api.your-domain.com/api/$1"
     }
   ],
   "headers": [
@@ -21,6 +21,22 @@
         {
           "key": "X-Content-Type-Options",
           "value": "nosniff"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
         }
       ]
     }
