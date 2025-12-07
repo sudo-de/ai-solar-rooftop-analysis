@@ -94,7 +94,7 @@ jobs:
     - name: Build backend image
       uses: docker/build-push-action@v5
       with:
-        context: ./backend
+        context: .
         file: ./backend/Dockerfile
         push: false
         tags: ${{ steps.tags.outputs.backend_test_tag }}
@@ -105,7 +105,7 @@ jobs:
       if: github.event_name != 'pull_request' && (github.event.inputs.push_to_registry == 'true' || github.event.inputs.push_to_registry == '')
       uses: docker/build-push-action@v5
       with:
-        context: ./backend
+        context: .
         file: ./backend/Dockerfile
         push: true
         tags: ${{ steps.tags.outputs.backend_tag }}
