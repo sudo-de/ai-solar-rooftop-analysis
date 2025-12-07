@@ -27,6 +27,25 @@ jobs:
       packages: write
 
     steps:
+    - name: Free disk space
+      run: |
+        echo "Disk space before cleanup:"
+        df -h
+        # Remove unnecessary packages and files
+        sudo rm -rf /usr/share/dotnet
+        sudo rm -rf /usr/local/lib/android
+        sudo rm -rf /opt/ghc
+        sudo rm -rf /opt/hostedtoolcache/CodeQL
+        sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+        # Clean up apt cache
+        sudo apt-get clean
+        sudo rm -rf /var/lib/apt/lists/*
+        # Clean up Docker
+        docker system prune -af --volumes || true
+        docker builder prune -af || true
+        echo "Disk space after cleanup:"
+        df -h
+
     - name: Checkout code
       uses: actions/checkout@v4
 
@@ -36,12 +55,6 @@ jobs:
         driver-opts: |
           image=moby/buildkit:latest
           network=host
-
-    - name: Clean up Docker build cache
-      if: always()
-      run: |
-        docker builder prune -af --filter "until=24h" || true
-        docker system prune -af --volumes --filter "until=24h" || true
 
     - name: Check Docker credentials
       id: docker-creds
@@ -113,8 +126,12 @@ jobs:
     - name: Clean up after frontend build
       if: always()
       run: |
-        docker builder prune -f --filter "until=1h" || true
-        rm -rf /tmp/frontend-image.tar 2>/dev/null || true
+        docker builder prune -af || true
+        docker image prune -af || true
+        rm -rf /tmp/* 2>/dev/null || true
+        rm -rf ~/.cache/* 2>/dev/null || true
+        echo "Disk space after frontend build:"
+        df -h
 
     - name: Build backend image
       uses: docker/build-push-action@v5
@@ -141,14 +158,24 @@ jobs:
     - name: Clean up after backend build
       if: always()
       run: |
-        docker builder prune -f --filter "until=1h" || true
-        rm -rf /tmp/backend-image.tar 2>/dev/null || true
+        docker builder prune -af || true
+        docker image prune -af || true
+        rm -rf /tmp/* 2>/dev/null || true
+        rm -rf ~/.cache/* 2>/dev/null || true
+        echo "Disk space after backend build:"
+        df -h
 
     - name: Final cleanup
       if: always()
       run: |
-        docker system df
-        docker builder prune -af --filter "until=1h" || true
+        echo "Docker disk usage:"
+        docker system df || true
+        docker system prune -af --volumes || true
+        docker builder prune -af || true
+        docker image prune -af || true
+        rm -rf /tmp/* 2>/dev/null || true
+        rm -rf ~/.cache/* 2>/dev/null || true
+        echo "Final disk space:"
         df -h
 
     - name: Image summary

@@ -187,6 +187,25 @@ jobs:
     if: github.event_name == 'push'
     
     steps:
+    - name: Free disk space
+      run: |
+        echo "Disk space before cleanup:"
+        df -h
+        # Remove unnecessary packages and files
+        sudo rm -rf /usr/share/dotnet
+        sudo rm -rf /usr/local/lib/android
+        sudo rm -rf /opt/ghc
+        sudo rm -rf /opt/hostedtoolcache/CodeQL
+        sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+        # Clean up apt cache
+        sudo apt-get clean
+        sudo rm -rf /var/lib/apt/lists/*
+        # Clean up Docker
+        docker system prune -af --volumes || true
+        docker builder prune -af || true
+        echo "Disk space after cleanup:"
+        df -h
+
     - name: Checkout code
       uses: actions/checkout@v4
 
@@ -200,7 +219,16 @@ jobs:
         push: false
         tags: ai-solar-frontend:test
         cache-from: type=gha
-        cache-to: type=gha,mode=max
+        cache-to: type=gha,mode=min
+
+    - name: Clean up after frontend build
+      if: always()
+      run: |
+        docker builder prune -af || true
+        docker image prune -af || true
+        rm -rf /tmp/* 2>/dev/null || true
+        echo "Disk space after frontend build:"
+        df -h
 
     - name: Build backend image (validation)
       uses: docker/build-push-action@v5
@@ -210,7 +238,18 @@ jobs:
         push: false
         tags: ai-solar-backend:test
         cache-from: type=gha
-        cache-to: type=gha,mode=max
+        cache-to: type=gha,mode=min
+
+    - name: Clean up after backend build
+      if: always()
+      run: |
+        docker system prune -af --volumes || true
+        docker builder prune -af || true
+        docker image prune -af || true
+        rm -rf /tmp/* 2>/dev/null || true
+        rm -rf ~/.cache/* 2>/dev/null || true
+        echo "Final disk space:"
+        df -h
 
   # Deploy to Staging
   deploy-staging:
