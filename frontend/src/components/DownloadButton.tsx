@@ -16,7 +16,7 @@ const DownloadButton = ({ data, format, filename }: DownloadButtonProps) => {
         mimeType = 'application/json'
         extension = 'json'
         break
-      case 'csv':
+      case 'csv': {
         // Simple CSV conversion
         const headers = Object.keys(data)
         const values = Object.values(data)
@@ -24,6 +24,7 @@ const DownloadButton = ({ data, format, filename }: DownloadButtonProps) => {
         mimeType = 'text/csv'
         extension = 'csv'
         break
+      }
       case 'pdf':
         alert('PDF export coming soon!')
         return

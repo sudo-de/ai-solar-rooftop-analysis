@@ -11,7 +11,11 @@ const ImagePreview = ({ files, onRemove }: ImagePreviewProps) => {
 
   useEffect(() => {
     const objectUrls = files.map(file => URL.createObjectURL(file))
-    setUrls(objectUrls)
+    
+    // Use setTimeout to avoid synchronous setState in effect
+    setTimeout(() => {
+      setUrls(objectUrls)
+    }, 0)
 
     return () => {
       objectUrls.forEach(url => URL.revokeObjectURL(url))

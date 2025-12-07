@@ -3,7 +3,7 @@ altair==5.5.0
 annotated-types==0.7.0
 anyio==4.9.0
 attrs==25.3.0
-audioop-lts==0.2.1
+# audioop-lts==0.2.1  # Only needed for Python 3.13+, audioop is built-in for Python 3.11-3.12
 blinker==1.9.0
 cachetools==5.5.2
 certifi==2025.4.26

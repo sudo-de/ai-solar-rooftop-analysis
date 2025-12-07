@@ -14,7 +14,10 @@ const ResultsDisplay = ({ results }: ResultsDisplayProps) => {
   // Debug: Log the results structure
   useEffect(() => {
     if (results) {
-      console.log('Results structure:', JSON.stringify(results, null, 2))
+      // Use setTimeout to avoid synchronous operations in effect
+      setTimeout(() => {
+        console.log('Results structure:', JSON.stringify(results, null, 2))
+      }, 0)
     }
   }, [results])
 
