@@ -206,6 +206,7 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: ./backend
+        file: ./backend/Dockerfile
         push: false
         tags: ai-solar-backend:test
         cache-from: type=gha
@@ -266,5 +267,4 @@ jobs:
         echo "Or use Kubernetes:"
         echo "  kubectl apply -f k8s/production/"
       continue-on-error: true
-
         

@@ -32,6 +32,16 @@ jobs:
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
+      with:
+        driver-opts: |
+          image=moby/buildkit:latest
+          network=host
+
+    - name: Clean up Docker build cache
+      if: always()
+      run: |
+        docker builder prune -af --filter "until=24h" || true
+        docker system prune -af --volumes --filter "until=24h" || true
 
     - name: Check Docker credentials
       id: docker-creds
@@ -86,7 +96,7 @@ jobs:
         push: false
         tags: ${{ steps.tags.outputs.frontend_test_tag }}
         cache-from: type=gha
-        cache-to: type=gha,mode=max
+        cache-to: type=gha,mode=min
 
     - name: Push frontend image to Docker Hub
       if: github.event_name != 'pull_request' && (github.event.inputs.push_to_registry == 'true' || github.event.inputs.push_to_registry == '') && steps.docker-creds.outputs.has_creds == 'true'
@@ -97,30 +107,49 @@ jobs:
         push: true
         tags: ${{ steps.tags.outputs.frontend_tag }}
         cache-from: type=gha
-        cache-to: type=gha,mode=max
+        cache-to: type=gha,mode=min
       continue-on-error: true
+
+    - name: Clean up after frontend build
+      if: always()
+      run: |
+        docker builder prune -f --filter "until=1h" || true
+        rm -rf /tmp/frontend-image.tar 2>/dev/null || true
 
     - name: Build backend image
       uses: docker/build-push-action@v5
       with:
-        context: .
+        context: ./backend
         file: ./backend/Dockerfile
         push: false
         tags: ${{ steps.tags.outputs.backend_test_tag }}
         cache-from: type=gha
-        cache-to: type=gha,mode=max
+        cache-to: type=gha,mode=min
 
     - name: Push backend image to Docker Hub
       if: github.event_name != 'pull_request' && (github.event.inputs.push_to_registry == 'true' || github.event.inputs.push_to_registry == '') && steps.docker-creds.outputs.has_creds == 'true'
       uses: docker/build-push-action@v5
       with:
-        context: .
+        context: ./backend
         file: ./backend/Dockerfile
         push: true
         tags: ${{ steps.tags.outputs.backend_tag }}
         cache-from: type=gha
-        cache-to: type=gha,mode=max
+        cache-to: type=gha,mode=min
       continue-on-error: true
+
+    - name: Clean up after backend build
+      if: always()
+      run: |
+        docker builder prune -f --filter "until=1h" || true
+        rm -rf /tmp/backend-image.tar 2>/dev/null || true
+
+    - name: Final cleanup
+      if: always()
+      run: |
+        docker system df
+        docker builder prune -af --filter "until=1h" || true
+        df -h
 
     - name: Image summary
       env:
