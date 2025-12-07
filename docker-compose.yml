@@ -15,11 +15,11 @@ services:
       - LOG_LEVEL=INFO
       - ENVIRONMENT=production
     volumes:
-      - ./uploads:/app/uploads
+      - ./backend/uploads:/app/uploads
+      - ./backend/outputs:/app/outputs
       - ./outputs:/app/outputs
-      - ../outputs:/app/outputs
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 3

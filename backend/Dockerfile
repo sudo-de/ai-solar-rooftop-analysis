@@ -33,6 +33,7 @@ RUN apt-get update && \
     libgl1 \
     libglib2.0-0 \
     libgomp1 \
+    curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -42,6 +43,10 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Copy application code
 COPY . .
+
+# Copy and make startup script executable
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
 
 # Create necessary directories
 RUN mkdir -p uploads outputs logs
@@ -56,8 +61,8 @@ EXPOSE 8000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
+    CMD curl -f http://localhost:8000/health || exit 1
 
-# Run the application
-CMD ["python", "main.py"]
+# Run the application using startup script
+CMD ["/app/start.sh"]
 
