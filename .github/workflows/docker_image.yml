@@ -1,4 +1,4 @@
-name: Build and Push Docker Images
+name: Build and Push Backend Docker Image
 
 on:
   push:
@@ -62,47 +62,20 @@ jobs:
       run: |
         if [ "${{ github.ref }}" == "refs/heads/main" ]; then
           if [ -n "$DOCKER_USERNAME" ]; then
-            echo "frontend_tag=${DOCKER_USERNAME}/ai-solar-frontend:latest" >> $GITHUB_OUTPUT
             echo "backend_tag=${DOCKER_USERNAME}/ai-solar-backend:latest" >> $GITHUB_OUTPUT
           else
-            echo "frontend_tag=ai-solar-frontend:latest" >> $GITHUB_OUTPUT
             echo "backend_tag=ai-solar-backend:latest" >> $GITHUB_OUTPUT
           fi
         else
           BRANCH_NAME=${GITHUB_REF#refs/heads/}
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
           if [ -n "$DOCKER_USERNAME" ]; then
-            echo "frontend_tag=${DOCKER_USERNAME}/ai-solar-frontend:${BRANCH_NAME}-${SHORT_SHA}" >> $GITHUB_OUTPUT
             echo "backend_tag=${DOCKER_USERNAME}/ai-solar-backend:${BRANCH_NAME}-${SHORT_SHA}" >> $GITHUB_OUTPUT
           else
-            echo "frontend_tag=ai-solar-frontend:${BRANCH_NAME}-${SHORT_SHA}" >> $GITHUB_OUTPUT
             echo "backend_tag=ai-solar-backend:${BRANCH_NAME}-${SHORT_SHA}" >> $GITHUB_OUTPUT
           fi
         fi
-        echo "frontend_test_tag=ai-solar-frontend:test" >> $GITHUB_OUTPUT
         echo "backend_test_tag=ai-solar-backend:test" >> $GITHUB_OUTPUT
-
-    - name: Build frontend image
-      uses: docker/build-push-action@v5
-      with:
-        context: ./frontend
-        file: ./frontend/Dockerfile
-        push: false
-        tags: ${{ steps.tags.outputs.frontend_test_tag }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=min
-
-    - name: Push frontend image to Docker Hub
-      if: github.event_name != 'pull_request' && (github.event.inputs.push_to_registry == 'true' || github.event.inputs.push_to_registry == '') && steps.docker-creds.outputs.has_creds == 'true'
-      uses: docker/build-push-action@v5
-      with:
-        context: ./frontend
-        file: ./frontend/Dockerfile
-        push: true
-        tags: ${{ steps.tags.outputs.frontend_tag }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=min
-      continue-on-error: true
 
     - name: Build backend image
       uses: docker/build-push-action@v5
@@ -130,27 +103,23 @@ jobs:
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       run: |
-        echo "## Docker Images Built" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### Frontend" >> $GITHUB_STEP_SUMMARY
-        echo "- Test tag: \`${{ steps.tags.outputs.frontend_test_tag }}\`" >> $GITHUB_STEP_SUMMARY
-        echo "- Production tag: \`${{ steps.tags.outputs.frontend_tag }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "## Docker Image Built" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "### Backend" >> $GITHUB_STEP_SUMMARY
         echo "- Test tag: \`${{ steps.tags.outputs.backend_test_tag }}\`" >> $GITHUB_STEP_SUMMARY
         echo "- Production tag: \`${{ steps.tags.outputs.backend_tag }}\`" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         if [ -z "$DOCKER_USERNAME" ]; then
-          echo "⚠️ **Docker credentials not configured. Images built but not pushed.**" >> $GITHUB_STEP_SUMMARY
+          echo "⚠️ **Docker credentials not configured. Image built but not pushed.**" >> $GITHUB_STEP_SUMMARY
         else
-          echo "✅ **Images pushed to Docker Hub**" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Image pushed to Docker Hub**" >> $GITHUB_STEP_SUMMARY
         fi
 
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    environment: production
+    environment: docker
     permissions:
       contents: read
 
@@ -160,27 +129,25 @@ jobs:
 
     - name: Deploy to production
       run: |
-        echo "🚀 Deploying Docker images to production..."
+        echo "🚀 Deploying Docker image to production..."
         echo ""
         echo "### Deployment Information" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "**Frontend Image:** \`${{ secrets.DOCKER_USERNAME }}/ai-solar-frontend:latest\`" >> $GITHUB_STEP_SUMMARY
         echo "**Backend Image:** \`${{ secrets.DOCKER_USERNAME }}/ai-solar-backend:latest\`" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "### Deployment Commands" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
-        echo "# Pull latest images" >> $GITHUB_STEP_SUMMARY
-        echo "docker pull ${{ secrets.DOCKER_USERNAME }}/ai-solar-frontend:latest" >> $GITHUB_STEP_SUMMARY
+        echo "# Pull latest backend image" >> $GITHUB_STEP_SUMMARY
         echo "docker pull ${{ secrets.DOCKER_USERNAME }}/ai-solar-backend:latest" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "# Deploy with docker-compose" >> $GITHUB_STEP_SUMMARY
-        echo "docker-compose pull" >> $GITHUB_STEP_SUMMARY
-        echo "docker-compose up -d" >> $GITHUB_STEP_SUMMARY
+        echo "docker-compose pull backend" >> $GITHUB_STEP_SUMMARY
+        echo "docker-compose up -d backend" >> $GITHUB_STEP_SUMMARY
         echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "✅ **Images are ready for deployment**" >> $GITHUB_STEP_SUMMARY
+        echo "✅ **Image is ready for deployment**" >> $GITHUB_STEP_SUMMARY
         echo ""
         echo "✅ Deployment information generated"
-        echo "📦 Images are available on Docker Hub"
+        echo "📦 Backend image is available on Docker Hub"
         echo "🔗 Pull and deploy using the commands above"
