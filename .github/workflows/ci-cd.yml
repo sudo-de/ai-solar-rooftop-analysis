@@ -180,7 +180,7 @@ jobs:
         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
         vercel-args: '--prod=false --yes'
 
-  # Build Docker Images
+  # Build Docker Images (validation only)
   build-docker:
     needs: [frontend-test, backend-test]
     runs-on: ubuntu-latest
@@ -193,21 +193,21 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: Login to Docker Hub
-      if: github.event_name != 'pull_request'
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Build and push frontend image
+    - name: Build frontend image (validation)
       uses: docker/build-push-action@v5
       with:
         context: ./frontend
-        push: ${{ github.event_name != 'pull_request' }}
-        tags: |
-          ${{ secrets.DOCKER_USERNAME }}/ai-solar-frontend:latest
-          ${{ secrets.DOCKER_USERNAME }}/ai-solar-frontend:${{ github.sha }}
+        push: false
+        tags: ai-solar-frontend:test
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Build backend image (validation)
+      uses: docker/build-push-action@v5
+      with:
+        context: ./backend
+        push: false
+        tags: ai-solar-backend:test
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
@@ -253,9 +253,18 @@ jobs:
 
     - name: Deploy Docker containers (Production)
       run: |
-        echo "✅ Docker images available for production deployment"
-        echo "Frontend: ${{ secrets.DOCKER_USERNAME }}/ai-solar-frontend:latest"
-        # Add your production deployment commands here
-        # Example: docker-compose -f docker-compose.yml up -d
+        echo "✅ Production deployment ready"
+        echo ""
+        echo "Docker images are built and pushed by the docker_image.yml workflow"
+        echo "To deploy, use the images from Docker Hub or run docker-compose locally"
+        echo ""
+        echo "Example deployment commands:"
+        echo "  docker pull ${{ secrets.DOCKER_USERNAME }}/ai-solar-frontend:latest"
+        echo "  docker pull ${{ secrets.DOCKER_USERNAME }}/ai-solar-backend:latest"
+        echo "  docker-compose -f docker-compose.yml up -d"
+        echo ""
+        echo "Or use Kubernetes:"
+        echo "  kubectl apply -f k8s/production/"
+      continue-on-error: true
 
         
